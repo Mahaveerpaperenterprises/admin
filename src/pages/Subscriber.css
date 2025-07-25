@@ -1,0 +1,87 @@
+.subscribers{
+  background-color: black;
+}
+.orders-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #0f172a, #1e293b);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.orders-table-container {
+  background: rgba(19, 34, 56, 0.6);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 16px rgba(0, 255, 204, 0.1);
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+  margin-top: 0rem;
+}
+
+.table-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #0fffc1;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 1px #0e1726;
+}
+
+.glass-table {
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.9);
+}
+
+thead {
+  background-color: #06aed5;
+  color: #e0f7fa;
+  font-size: 1rem;
+}
+
+thead th {
+  padding: 14px;
+  text-align: left;
+}
+
+tbody tr {
+  transition: background 0.3s ease;
+}
+
+tbody tr:hover {
+  background-color: #132238;
+  cursor: pointer;
+}
+
+tbody td {
+  padding: 14px;
+  border-bottom: 1px solid #243447;
+  color: #e0f7fa;
+}
+
+@media (max-width: 768px) {
+  .orders-table-container {
+    padding: 1rem;
+  }
+
+  .table-title {
+    font-size: 1.5rem;
+  }
+
+  thead {
+    font-size: 0.9rem;
+  }
+
+  tbody td {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+}

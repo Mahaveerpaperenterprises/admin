@@ -1,0 +1,92 @@
+:root {
+  --nav-bg: #141c2f;
+  --nav-text: #f1f5f9;
+  --nav-hover: #38bdf8;
+  --nav-active-bg: #1e293b;
+  --nav-active-border: #0ea5e9;
+  --brand-accent: #0ea5e9;
+}
+
+.admin-navbar {
+  background: var(--nav-bg);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.admin-brand {
+  font-size: 24px;
+  color: var(--brand-accent);
+  font-weight: bold;
+}
+
+.admin-nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.admin-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  font-size: 16px;
+  color: var(--nav-text);
+  text-decoration: none;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.admin-nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--nav-hover);
+}
+
+.admin-nav-btn.active {
+  background-color: var(--nav-active-bg);
+  color: var(--nav-hover);
+  border: 1px solid var(--nav-active-border);
+  font-weight: 600;
+}
+
+.admin-hamburger {
+  display: none;
+  font-size: 24px;
+  color: var(--brand-accent);
+  cursor: pointer;
+}
+
+.admin-mobile-menu {
+  position: absolute;
+  top: 70px;
+  right: 0;
+  width: 100%;
+  background-color: var(--nav-bg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 10;
+  border-top: 1px solid #334155;
+}
+
+@media (max-width: 768px) {
+  .admin-nav-links {
+    display: none;
+  }
+
+  .admin-hamburger {
+    display: block;
+  }
+
+  .admin-mobile-menu .admin-nav-btn {
+    padding: 12px 20px;
+    font-size: 18px;
+  }
+}

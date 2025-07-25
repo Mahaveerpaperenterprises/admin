@@ -1,0 +1,117 @@
+.add-catalog-page {
+  font-family: 'Segoe UI', sans-serif;
+  padding: 2rem;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.add-catalog-container {
+  width: 100%;
+  max-width: 600px;
+  background: #132238;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 24px rgba(0, 255, 204, 0.08);
+  animation: fadeIn 0.6s ease-in-out;
+   border: 1.5px solid #38bdf8;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.add-catalog-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0fffc1;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.add-catalog-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.add-catalog-form input[type="text"] {
+  width: 97%;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: 1.5px solid #38bdf8;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background-color: #1f2a3c;
+  color: #e0f7fa;
+  transition: border-color 0.3s;
+}
+
+.add-catalog-form input[type="text"]:focus {
+  border-color: #0fffc1;
+  outline: none;
+}
+
+.upload-box {
+  width: 95%;
+  padding: 20px;
+  border: 2px dashed #38bdf8;
+  border-radius: 12px;
+  text-align: center;
+  color: #7dd3fc;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  background-color: #1e293b;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.upload-box:hover {
+  background-color: #223146;
+  border-color: #0fffc1;
+}
+
+.upload-box.dragover {
+  background-color: #0e7490;
+  border-color: #0fffc1;
+  color: #ffffff;
+}
+
+.submit-btn {
+  width: 50%;
+  background-color: #0fffc1;
+  color: #0e1726;
+  padding: 14px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  align-content: center;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.submit-btn:hover {
+  background-color: #06d6a0;
+}
+
+.success-msg {
+  color: #22c55e;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.error-msg {
+  color: #f87171;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}

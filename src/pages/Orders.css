@@ -1,0 +1,135 @@
+.orders-root {
+  background-color: #0e1726;
+  min-height: 100vh;
+}
+
+.orders-container {
+  padding-top: 0px;
+}
+
+.orders-table-container {
+  margin-top: -50px;
+  padding: 10px 40px;
+}
+
+.table-title {
+  color: #0fffc1;
+  font-size: 32px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.glass-table {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  overflow-x: auto;
+  box-shadow: 0 4px 20px rgba(0, 255, 204, 0.2);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+th, td {
+  padding: 16px;
+  text-align: left;
+  color: #e0f7fa;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+th {
+  background-color: rgba(0, 255, 204, 0.1);
+  color: #0fffc1;
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: rgba(0, 255, 204, 0.05);
+  transform: scale(1.01);
+  transition: all 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .orders-table-container {
+    padding: 20px;
+  }
+
+  .table-title {
+    font-size: 24px;
+  }
+
+  th, td {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.thumbnail:hover {
+  transform: scale(1.05);
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-content {
+  position: relative;
+  top: 30%;
+  left: 45%;
+  max-width: 60%;
+  max-height: 60%;
+}
+
+.popup-image {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+}
+
+.close-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #0fffc1;
+  color: #0e1726;
+  font-size: 24px;
+  padding: 0 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px #0fffc1;
+}
