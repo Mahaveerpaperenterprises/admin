@@ -14,8 +14,7 @@ function AddProduct() {
     imageUrls: '',
     published: true,
   });
-
-  const [images, setImages] = useState([]);
+  const [files, setFiles] = useState([]);
   const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
@@ -27,34 +26,31 @@ function AddProduct() {
   };
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages(files);
+    setFiles(Array.from(e.target.files || []));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const form = new FormData();
-    form.append('name', formData.name);
-    form.append('model_name', formData.model_name);
-    form.append('brand', formData.brand);
-    form.append('category_slug', formData.category_slug);
-    form.append('price', formData.price || '');
-    form.append('discountedPrice', formData.discountedPrice || '');
-    form.append('description', formData.description);
-    form.append('published', formData.published);
+    const fd = new FormData();
+    fd.append('name', formData.name);
+    fd.append('model_name', formData.model_name);
+    fd.append('brand', formData.brand);
+    fd.append('category_slug', formData.category_slug);
+    fd.append('price', formData.price || '');
+    fd.append('discountedPrice', formData.discountedPrice || '');
+    fd.append('description', formData.description);
+    fd.append('published', String(formData.published));
 
-    const urlList = formData.imageUrls
-      ? formData.imageUrls.split(',').map((url) => url.trim()).filter((url) => url)
-      : [];
-
-    urlList.forEach((url) => form.append('imageUrls', url));
-    images.forEach((file) => form.append('images', file));
+    if (formData.imageUrls) {
+      fd.append('imageUrls', formData.imageUrls);
+    }
+    files.forEach((f) => fd.append('images', f));
 
     try {
       const res = await fetch('http://localhost:5000/api/products', {
         method: 'POST',
-        body: form,
+        body: fd,
       });
 
       const data = await res.json();
@@ -72,12 +68,11 @@ function AddProduct() {
           imageUrls: '',
           published: true,
         });
-        setImages([]);
+        setFiles([]);
       } else {
-        setMessage(`❌ ${data.error || 'Something went wrong'}`);
+        setMessage(`❌ ${data.error || 'Error occurred'}`);
       }
     } catch (err) {
-      console.error(err);
       setMessage('❌ Server error');
     }
   };
@@ -97,8 +92,8 @@ function AddProduct() {
             <input name="discountedPrice" type="number" step="0.01" value={formData.discountedPrice} onChange={handleChange} placeholder="Discounted Price" />
           </div>
           <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Description" required />
-          <input name="imageUrls" value={formData.imageUrls} onChange={handleChange} placeholder="Image URLs (comma-separated)" />
-          <input type="file" accept="image/*" multiple onChange={handleFileChange} />
+          <input name="imageUrls" value={formData.imageUrls} onChange={handleChange} placeholder="Image URLs (comma-separated or single data URL)" />
+          <input type="file" multiple accept="image/*" onChange={handleFileChange} />
           <label className="published-checkbox">
             <input type="checkbox" name="published" checked={formData.published} onChange={handleChange} />
             Published

@@ -3,109 +3,84 @@ import './Orders.css';
 import AdminNavbar from './AdminNavbar';
 
 function Orders() {
-  const [data, setData] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [error, setError] = useState('');
-  const [popupImage, setPopupImage] = useState(null);
 
   useEffect(() => {
-    const loadQuotes = async () => {
+    const fetchOrders = async () => {
       try {
-        const res = await fetch('https://backend-tawny-one-62.vercel.app/api/quotes');
+        const res = await fetch('http://localhost:5000/api/orders');
         if (!res.ok) {
           const err = await res.json();
-          setError(`❌ Backend Error: ${err.error || 'Unknown error'}`);
+          setError(err.error || 'Failed to fetch orders');
           return;
         }
-
-        const quotes = await res.json();
-        const filtered = quotes.filter(q =>
-          q.name && q.email && q.phone && q.product_name && q.image_url
-        );
-
-        const formatted = filtered.map((q, i) => ({
-          id: i + 1,
-          name: q.name,
-          phone: q.phone,
-          email: q.email,
-          product: q.product_name,
-          model: q.product_brand,
-          product_type: q.product_type,
-          image: q.image_url,
-        })).reverse();
-
-        setData(formatted);
+        const data = await res.json();
+        setOrders(data.orders || []);
       } catch (err) {
-        setError('❌ Failed to fetch quotes: ' + err.message);
+        setError('Failed to fetch orders: ' + err.message);
       }
     };
 
-    loadQuotes();
+    fetchOrders();
   }, []);
 
   return (
     <div className="orders-root">
       <AdminNavbar />
       <div className="orders-container">
-        <div className="orders-table-container">
-          <h2 className="table-title">Order Details</h2>
+        <h2 className="table-title">Orders</h2>
 
-          {error && (
-            <div className="error-message">{error}</div>
-          )}
+        {error && <div className="error-message">{error}</div>}
 
-          <div className="glass-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Serial No</th>
-                  <th>Customer Name</th>
-                  <th>Phone Number</th>
-                  <th>Email</th>
-                  <th>Brand</th>
-                  <th>Model</th>
-                  <th>Product Type</th>
-                  <th>Image</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.length > 0 ? (
-                  data.map((row, index) => (
-                    <tr key={index}>
-                      <td>{row.id}</td>
-                      <td>{row.name}</td>
-                      <td>{row.phone}</td>
-                      <td>{row.email}</td>
-                      <td>{row.model}</td>
-                      <td>{row.product}</td>
-                      <td>{row.product_type}</td>
+        <div className="glass-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Payment</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.length > 0 ? (
+                orders.map((order) =>
+                  JSON.parse(order.items).map((item, index) => (
+                    <tr key={`${order.order_id}-${index}`}>
+                      <td>{order.order_id}</td>
+                      <td>{order.date}</td>
+                      <td>{item.name}</td>
                       <td>
                         <img
-                          src={row.image}
-                          alt={row.product}
-                          className="thumbnail"
-                          onClick={() => setPopupImage(row.image)}
+                          src={item.image}
+                          alt={item.name}
+                          style={{
+                            width: '60px',
+                            height: '60px',
+                            borderRadius: '8px',
+                            objectFit: 'cover',
+                            border: '1px solid #ccc',
+                          }}
                         />
                       </td>
+                      <td>{item.quantity}</td>
+                      <td>₹{item.price}</td>
+                      <td>{order.payment_mode}</td>
                     </tr>
                   ))
-                ) : (
-                  <tr>
-                    <td colSpan="8">No valid orders found.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                )
+              ) : (
+                <tr>
+                  <td colSpan="7">No orders available</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-
-        {popupImage && (
-          <div className="popup-overlay" onClick={() => setPopupImage(null)}>
-            <div className="popup-content" onClick={e => e.stopPropagation()}>
-              <span className="close-btn" onClick={() => setPopupImage(null)}>&times;</span>
-              <img src={popupImage} alt="Enlarged" className="popup-image" />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
