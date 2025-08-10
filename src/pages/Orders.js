@@ -1,29 +1,82 @@
-import React, { useEffect, useState } from 'react';
-import './Orders.css';
-import AdminNavbar from './AdminNavbar';
+import React, { useEffect, useState } from "react";
+import "./Orders.css";
+import AdminNavbar from "./AdminNavbar";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/orders');
-        if (!res.ok) {
-          const err = await res.json();
-          setError(err.error || 'Failed to fetch orders');
+        const res = await fetch("http://localhost:5000/api/orders");
+        const raw = await res.text();
+        let data = null;
+        try {
+          data = raw ? JSON.parse(raw) : null;
+        } catch {
+          data = null;
+        }
+        if (res.status < 200 || res.status >= 300) {
+          setError((data && (data.error || data.message)) || "Failed to fetch orders");
           return;
         }
-        const data = await res.json();
-        setOrders(data.orders || []);
+        const list = Array.isArray(data) ? data : data?.orders || [];
+        const normalized = (Array.isArray(list) ? list : []).map((o) => {
+          let items = [];
+          if (Array.isArray(o.items)) items = o.items;
+          else if (typeof o.items === "string") {
+            try {
+              const p = JSON.parse(o.items);
+              items = Array.isArray(p) ? p : [];
+            } catch {
+              items = [];
+            }
+          }
+          const itemsNorm = items.map((it) => ({
+            product_name: it.product_name ?? it.name ?? "",
+            image_url: it.image_url ?? it.image ?? (Array.isArray(it.images) ? it.images[0] : "") ?? "",
+            quantity:
+              typeof it.quantity === "number"
+                ? it.quantity
+                : typeof it.qty === "number"
+                ? it.qty
+                : typeof it.quantity_ordered === "number"
+                ? it.quantity_ordered
+                : Number(it.quantity) || Number(it.qty) || 0,
+            unit_price_minor:
+              typeof it.unit_price_minor === "number"
+                ? it.unit_price_minor
+                : typeof it.price_minor === "number"
+                ? it.price_minor
+                : typeof it.price === "number"
+                ? Math.round(it.price * 100)
+                : typeof it.price === "string"
+                ? Math.round(Number(it.price) * 100)
+                : 0,
+          }));
+          return {
+            ...o,
+            items: itemsNorm,
+          };
+        });
+        setOrders(normalized);
       } catch (err) {
-        setError('Failed to fetch orders: ' + err.message);
+        setError("Failed to fetch orders: " + (err?.message || "Unknown error"));
       }
     };
-
     fetchOrders();
   }, []);
+
+  const toMoney = (minor, cur) => {
+    const v = typeof minor === "number" ? minor : Number(minor || 0);
+    return `${(v / 100).toFixed(2)} ${cur || ""}`.trim();
+  };
+
+  const priceItem = (minor) => {
+    const v = typeof minor === "number" ? minor : Number(minor || 0);
+    return `₹${(v / 100).toFixed(2)}`;
+  };
 
   return (
     <div className="orders-root">
@@ -39,43 +92,71 @@ function Orders() {
               <tr>
                 <th>Order ID</th>
                 <th>Date</th>
+                <th>Customer</th>
                 <th>Product</th>
                 <th>Image</th>
-                <th>Quantity</th>
-                <th>Price</th>
+                <th>Qty</th>
+                <th>Item Price</th>
+                <th>Order Total</th>
                 <th>Payment</th>
+                <th>Status</th>
+                <th>Fulfillment</th>
               </tr>
             </thead>
             <tbody>
-              {orders.length > 0 ? (
-                orders.map((order) =>
-                  JSON.parse(order.items).map((item, index) => (
-                    <tr key={`${order.order_id}-${index}`}>
-                      <td>{order.order_id}</td>
-                      <td>{order.date}</td>
-                      <td>{item.name}</td>
+              {orders && orders.length > 0 ? (
+                orders.flatMap((order) => {
+                  const items = Array.isArray(order.items) ? order.items : [];
+                  if (items.length === 0) {
+                    return (
+                      <tr key={`${order.id}-empty`}>
+                        <td>{order.id}</td>
+                        <td>{order.created_at ? new Date(order.created_at).toLocaleString() : ""}</td>
+                        <td>{order.email || ""}</td>
+                        <td colSpan={3}>No items</td>
+                        <td></td>
+                        <td>{toMoney(order.total_amount, order.currency)}</td>
+                        <td>{order.payment_status}</td>
+                        <td>{order.order_status}</td>
+                        <td>{order.fulfill_status}</td>
+                      </tr>
+                    );
+                  }
+                  return items.map((it, idx) => (
+                    <tr key={`${order.id}-${idx}`}>
+                      <td>{idx === 0 ? order.id : ""}</td>
+                      <td>{idx === 0 ? (order.created_at ? new Date(order.created_at).toLocaleString() : "") : ""}</td>
+                      <td>{idx === 0 ? (order.email || "") : ""}</td>
+                      <td>{it.product_name || ""}</td>
                       <td>
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          style={{
-                            width: '60px',
-                            height: '60px',
-                            borderRadius: '8px',
-                            objectFit: 'cover',
-                            border: '1px solid #ccc',
-                          }}
-                        />
+                        {it.image_url ? (
+                          <img
+                            src={it.image_url}
+                            alt={it.product_name || "item"}
+                            style={{
+                              width: "60px",
+                              height: "60px",
+                              borderRadius: "8px",
+                              objectFit: "cover",
+                              border: "1px solid #ccc",
+                            }}
+                          />
+                        ) : (
+                          ""
+                        )}
                       </td>
-                      <td>{item.quantity}</td>
-                      <td>₹{item.price}</td>
-                      <td>{order.payment_mode}</td>
+                      <td>{it.quantity ?? ""}</td>
+                      <td>{priceItem(it.unit_price_minor)}</td>
+                      <td>{idx === 0 ? toMoney(order.total_amount, order.currency) : ""}</td>
+                      <td>{idx === 0 ? order.payment_status : ""}</td>
+                      <td>{idx === 0 ? order.order_status : ""}</td>
+                      <td>{idx === 0 ? order.fulfill_status : ""}</td>
                     </tr>
-                  ))
-                )
+                  ));
+                })
               ) : (
                 <tr>
-                  <td colSpan="7">No orders available</td>
+                  <td colSpan={11}>No orders available</td>
                 </tr>
               )}
             </tbody>
