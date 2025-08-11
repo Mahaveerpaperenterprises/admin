@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import "./Orders.css";
 import AdminNavbar from "./AdminNavbar";
 
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
+  (process.env.NODE_ENV === "production"
+    ? "https://mahaveerbe.vercel.app"
+    : "http://localhost:5000");
+
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
@@ -9,7 +15,7 @@ function Orders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/orders");
+        const res = await fetch(`${API_BASE}/api/orders`);
         const raw = await res.text();
         let data = null;
         try {
@@ -83,9 +89,7 @@ function Orders() {
       <AdminNavbar />
       <div className="orders-container">
         <h2 className="table-title">Orders</h2>
-
         {error && <div className="error-message">{error}</div>}
-
         <div className="glass-table">
           <table>
             <thead>
