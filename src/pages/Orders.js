@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Orders.css";
 import AdminNavbar from "./AdminNavbar";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-  (process.env.NODE_ENV === "production"
-    ? "https://mahaveerbe.vercel.app"
-    : "http://localhost:5000");
+const API_BASE = "https://mahaveerbe.vercel.app"; 
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -15,33 +11,45 @@ function Orders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/orders`);
-        const raw = await res.text();
+        const res = await fetch(`${API_BASE}/api/orders`, {
+          headers: { Accept: "application/json" },
+        });
+
+        const text = await res.text();
         let data = null;
         try {
-          data = raw ? JSON.parse(raw) : null;
+          data = text ? JSON.parse(text) : null;
         } catch {
           data = null;
         }
-        if (res.status < 200 || res.status >= 300) {
+
+        if (!res.ok) {
           setError((data && (data.error || data.message)) || "Failed to fetch orders");
           return;
         }
-        const list = Array.isArray(data) ? data : data?.orders || [];
-        const normalized = (Array.isArray(list) ? list : []).map((o) => {
+
+        const ordersArray = Array.isArray(data) ? data : data?.orders || [];
+
+        const normalized = ordersArray.map((order) => {
           let items = [];
-          if (Array.isArray(o.items)) items = o.items;
-          else if (typeof o.items === "string") {
+          if (Array.isArray(order.items)) {
+            items = order.items;
+          } else if (typeof order.items === "string") {
             try {
-              const p = JSON.parse(o.items);
-              items = Array.isArray(p) ? p : [];
+              const parsed = JSON.parse(order.items);
+              items = Array.isArray(parsed) ? parsed : [];
             } catch {
               items = [];
             }
           }
+
           const itemsNorm = items.map((it) => ({
             product_name: it.product_name ?? it.name ?? "",
-            image_url: it.image_url ?? it.image ?? (Array.isArray(it.images) ? it.images[0] : "") ?? "",
+            image_url:
+              it.image_url ??
+              it.image ??
+              (Array.isArray(it.images) ? it.images[0] : "") ??
+              "",
             quantity:
               typeof it.quantity === "number"
                 ? it.quantity
@@ -61,16 +69,16 @@ function Orders() {
                 ? Math.round(Number(it.price) * 100)
                 : 0,
           }));
-          return {
-            ...o,
-            items: itemsNorm,
-          };
+
+          return { ...order, items: itemsNorm };
         });
+
         setOrders(normalized);
       } catch (err) {
         setError("Failed to fetch orders: " + (err?.message || "Unknown error"));
       }
     };
+
     fetchOrders();
   }, []);
 
@@ -108,9 +116,9 @@ function Orders() {
               </tr>
             </thead>
             <tbody>
-              {orders && orders.length > 0 ? (
+              {orders.length > 0 ? (
                 orders.flatMap((order) => {
-                  const items = Array.isArray(order.items) ? order.items : [];
+                  const items = order.items || [];
                   if (items.length === 0) {
                     return (
                       <tr key={`${order.id}-empty`}>
@@ -133,7 +141,7 @@ function Orders() {
                       <td>{idx === 0 ? (order.email || "") : ""}</td>
                       <td>{it.product_name || ""}</td>
                       <td>
-                        {it.image_url ? (
+                        {it.image_url && (
                           <img
                             src={it.image_url}
                             alt={it.product_name || "item"}
@@ -145,8 +153,6 @@ function Orders() {
                               border: "1px solid #ccc",
                             }}
                           />
-                        ) : (
-                          ""
                         )}
                       </td>
                       <td>{it.quantity ?? ""}</td>
