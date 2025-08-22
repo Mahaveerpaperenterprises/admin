@@ -111,8 +111,8 @@ function Orders() {
                 <th>Item Price</th>
                 <th>Order Total</th>
                 <th>Payment</th>
-                <th>Status</th>
-                <th>Fulfillment</th>
+                {/*<th>Status</th>
+                <th>Fulfillment</th> */}
               </tr>
             </thead>
             <tbody>
@@ -129,8 +129,8 @@ function Orders() {
                         <td></td>
                         <td>{toMoney(order.total_amount, order.currency)}</td>
                         <td>{order.payment_status}</td>
-                        <td>{order.order_status}</td>
-                        <td>{order.fulfill_status}</td>
+                        {/*<td>{order.order_status}</td>
+                        <td>{order.fulfill_status}</td> */}
                       </tr>
                     );
                   }
@@ -159,8 +159,8 @@ function Orders() {
                       <td>{priceItem(it.unit_price_minor)}</td>
                       <td>{idx === 0 ? toMoney(order.total_amount, order.currency) : ""}</td>
                       <td>{idx === 0 ? order.payment_status : ""}</td>
-                      <td>{idx === 0 ? order.order_status : ""}</td>
-                      <td>{idx === 0 ? order.fulfill_status : ""}</td>
+                      {/*<td>{idx === 0 ? order.order_status : ""}</td>
+                      <td>{idx === 0 ? order.fulfill_status : ""}</td> */}
                     </tr>
                   ));
                 })

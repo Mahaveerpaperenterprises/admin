@@ -14,8 +14,8 @@ function AdminNavbar() {
   const navItems = [
     { path: '/', label: 'Orders', icon: <FaClipboardList /> },
     { path: '/add-product', label: 'Products', icon: <FaPlusSquare /> },
-    { path: '/add-catalog', label: 'Add Catalog', icon: <FaFilePdf /> },
-    { path: '/subscribers', label: 'Subscribers', icon: <FaUsers /> }
+    {/*{ path: '/add-catalog', label: 'Add Catalog', icon: <FaFilePdf /> },
+    { path: '/subscribers', label: 'Subscribers', icon: <FaUsers /> } */}
   ];
 
   return (
