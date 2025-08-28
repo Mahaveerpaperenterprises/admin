@@ -22,7 +22,9 @@
   color: #0fffc1;
   margin-bottom: 1.5rem;
 }
-
+.price-preview{
+  color: white;
+}
 .addProduct-form {
   display: flex;
   flex-direction: column;
