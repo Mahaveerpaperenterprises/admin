@@ -86,6 +86,18 @@ function AddProduct() {
     files.forEach((f) => fd.append('images', f));
 
     try {
+      const resCategory = await fetch(`${API_BASE}/api/navlinks/add-category-slug`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category_slug: formData.category_slug,
+          label: formData.category_slug,
+        }),
+      });
+      await resCategory.json().catch(() => ({}));
+    } catch {}
+
+    try {
       const res = await fetch(`${API_BASE}/api/products`, {
         method: 'POST',
         body: fd,
@@ -168,7 +180,7 @@ function AddProduct() {
             <span>
               <strong>Preview :</strong>:
             </span>
-            <span> B2B: {priceAfterB2B ? `₹${priceAfterB2B}` : '-'}</span>,
+            <span> B2B: {priceAfterB2B ? `₹${priceAfterB2B}` : '-'}</span> ,
             <span> B2C: {priceAfterB2C ? `₹${priceAfterB2C}` : '-'}</span>
           </div>
           <textarea
